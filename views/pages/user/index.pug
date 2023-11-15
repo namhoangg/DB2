@@ -1,0 +1,18 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+block main
+  +alert-error(5000)
+  div(class="container")
+      div(class="row")
+        div(class="col-3")
+        div(class="col-6")
+          form(class="login-form" method="post")
+            h3(class="login-form-title") Login          
+            .mb-3
+              label.form-label(for='username') Username
+              input#username.form-control(type='text' class="username" placeholder="Enter username" name="username" required)
+            .mb-3
+              label.form-label(for='password') Password
+              input#password.form-control(type='password' class="password" placeholder="Enter password" name="password" required)
+            button.btn.btn-primary(type='submit' class="submit") Submit
+        div(class="col-3")
