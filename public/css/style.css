@@ -183,4 +183,79 @@ header {
 .patient-row,.doctor-row{
   cursor: pointer;
 }
+.patient-info{
+  margin: 15px;
+}
+.patient-info-item{
+  display: flex;
+  align-items: center;
+}
+.patient-info-item-title{
+  font-size: 18px;
+  font-weight: 500;
+  margin-right: 20px;
+  width: 50%;
+}
+.patient-info-item-content{
+  font-size: 18px;
+  width: 50%;
+}
+.patient-action{
+  margin: 15px;
+}
+.patient-action-button{
+  width: 60%;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  background-color: #8ecae6;
+}
+td button,.print-button,.print-button2{
+  border-radius: 5px;
+  background-color: #bbd1db;
+  width: 60px;
+  height: 30px;
+  border: none;
+}
+.print-button,.print-button2{
+  width:100px;
+  position: relative;
+  bottom: 20px;
+  right: 20px;
+}
+.print-button-div,.print-button-div2{
+  position: fixed;
+  bottom: 0px;
+  right: 30px;
+}
+.print-background{
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  opacity: 0.2;
+  
+  background-color: #322c2c;
+}
+.treatment-report,.examination-report{
+  display: none;
+  position: fixed;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  z-index: 999;
+  opacity: 1;
+  background-color: white;
+  width: 500px;
+  height: 600px;
+}
+.print-title{
+  margin:15px;
+  text-align: center;
+}
+.treatment-report-info{
+  margin-left: 30px;
+}
+.cry{
+  margin-left:50px ;
+}
 /* end patient */

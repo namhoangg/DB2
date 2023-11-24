@@ -1,3 +1,4 @@
+// import Swal from 'sweetalert2'
 // Show Alert
 const showAlert = document.querySelector("[show-alert]");
 if (showAlert) {
@@ -147,3 +148,87 @@ if (doctorRow) {
   });
 }
 //end doctor
+const printTreatmentReport = document.querySelectorAll(
+  "[print-treatment-report]"
+);
+if (printTreatmentReport) {
+  printTreatmentReport.forEach((button) => {
+    button.addEventListener("click", () => {
+      const treatmentReport = document.querySelector(".treatment-report");
+      treatmentReport.style.display = "block";
+      const printBackground = document.querySelector(".print-background");
+      printBackground.style.display = "block";
+      const header = document.querySelector("header");
+      header.style.display = "none";
+      const sider = document.querySelector(".sider");
+      sider.style.display = "none";
+      const mainLayout = document.querySelector(".main-layout2");
+      mainLayout.style.display = "none";
+      const printLayout = document.querySelector(".print-layout");
+      printLayout.style.display = "block";
+
+      const treatmentstartdate = document.querySelector("[treatmentstartdate]");
+      const admissiondate = document.querySelector("[admissiondate]");
+      const doctor = document.querySelector("[doctor]");
+      const inresult = document.querySelector("[inresult]");
+      const dateofdischarge = document.querySelector("[dateofdischarge]");
+      const treatenddate = document.querySelector("[treatenddate]");
+      const data = button.getAttribute("data-id");
+      const dataArr = data.split(",");
+      treatmentstartdate.innerHTML = dataArr[0];
+      admissiondate.innerHTML = dataArr[1];
+      doctor.innerHTML = dataArr[2];
+      inresult.innerHTML = dataArr[3];
+      dateofdischarge.innerHTML = dataArr[4];
+      treatenddate.innerHTML = dataArr[5];
+    });
+  });
+}
+const printExaminationReport = document.querySelectorAll(
+  "[print-examination-report]"
+);
+if (printExaminationReport) {
+  printExaminationReport.forEach((button) => {
+    button.addEventListener("click", () => {
+      const examinationReport = document.querySelector(".examination-report");
+      examinationReport.style.display = "block";
+      const printBackground = document.querySelector(".print-background");
+      printBackground.style.display = "block";
+      const header = document.querySelector("header");
+      header.style.display = "none";
+      const sider = document.querySelector(".sider");
+      sider.style.display = "none";
+      const mainLayout = document.querySelector(".main-layout2");
+      mainLayout.style.display = "none";
+      const printLayout = document.querySelector(".print-layout");
+      printLayout.style.display = "block";
+
+      const examinationdate = document.querySelector("[examinationdate]");
+      const doctor = document.querySelector("[doctor2]");
+      const outdiagnosis = document.querySelector("[outdiagnosis]");
+      const exmNextDate = document.querySelector("[exmNextDate]");
+      const exmFee = document.querySelector("[exmFee]");
+      const data = button.getAttribute("data-id");
+      const dataArr = data.split(",");
+      examinationdate.innerHTML = dataArr[0];
+      doctor.innerHTML = dataArr[1];
+      outdiagnosis.innerHTML = dataArr[2];
+      exmNextDate.innerHTML = dataArr[3];
+      exmFee.innerHTML = dataArr[4];
+    });
+  });
+}
+const printButton = document.querySelector(".print-button");
+if (printButton) {
+  printButton.addEventListener("click", () => {
+    printButton.style.display = "none";
+    window.print();
+  });
+}
+const printButton2 = document.querySelector(".print-button2");
+if (printButton2) {
+  printButton2.addEventListener("click", () => {
+    printButton2.style.display = "none";
+    window.print();
+  });
+}

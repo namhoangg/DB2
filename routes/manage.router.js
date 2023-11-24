@@ -8,4 +8,5 @@ router.get("/patient", controller.patient);
 router.get("/patient/detail/:id", controller.patientDetail);
 router.get("/doctor", controller.doctor);
 router.get("/doctor/detail/:id", controller.doctorDetail);
+
 module.exports = router;

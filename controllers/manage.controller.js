@@ -76,10 +76,62 @@ module.exports.patientDetail = async (req, res) => {
   const data = [id];
   const patientDetail = await db.queryOne(sql, data);
   patientDetail.PDoB = getDateHelper.getDate(patientDetail.PDoB);
-  console.log(patientDetail);
+  const sqlTreatment = `SELECT * FROM treatmentreport WHERE PCode=?`;
+  const treatmentList = await db.querySql(sqlTreatment, data);
+  //   [
+  //   {
+  //     TreatmentStartDate: 2022-05-16T00:30:00.000Z,
+  //     PCode: '000000001',
+  //     INPCode: 'IP000000001',
+  //     AdmissionDate: 2022-05-09T17:00:00.000Z,
+  //     DrCode: 'Dr000001',
+  //     InResult: 'recovered',
+  //     DateOfDischarge: 2022-05-19T17:00:00.000Z,
+  //     TreatEndDate: 2022-06-04T17:00:00.000Z
+  //   }
+  // ]
+  for (const treatment of treatmentList) {
+    treatment.TreatmentStartDate = getDateHelper.getDate(
+      treatment.TreatmentStartDate
+    );
+    treatment.AdmissionDate = getDateHelper.getDate(treatment.AdmissionDate);
+    treatment.DateOfDischarge = getDateHelper.getDate(
+      treatment.DateOfDischarge
+    );
+    treatment.TreatEndDate = getDateHelper.getDate(treatment.TreatEndDate);
+    treatment.doctor = await db.queryOne(
+      `SELECT EFName,ELName FROM doctor WHERE ECode=?`,
+      [treatment.DrCode]
+    );
+    treatment.doctorName = `${treatment.doctor.EFName} ${treatment.doctor.ELName}`;
+  }
+  const sqlExamination = `SELECT * FROM examinationreport WHERE PCode=?`;
+  const examinationList = await db.querySql(sqlExamination, data);
+  //   [
+  //   {
+  //     ExaminationDate: 2022-05-10T00:30:00.000Z,
+  //     PCode: '000000001',
+  //     OUTPCode: 'OP000000001',
+  //     DrCode: 'Dr000001',
+  //     OutDiagnosis: 'Routine checkup',
+  //     ExmNextDate: 2022-06-09T17:00:00.000Z,
+  //     ExmFee: 50
+  //   }
+  // ]
+  for (const exam of examinationList) {
+    exam.ExaminationDate = getDateHelper.getDate(exam.ExaminationDate);
+    exam.ExmNextDate = getDateHelper.getDate(exam.ExmNextDate);
+    exam.doctor = await db.queryOne(
+      `SELECT EFName,ELName FROM doctor WHERE ECode=?`,
+      [exam.DrCode]
+    );
+    exam.doctorName = `${exam.doctor.EFName} ${exam.doctor.ELName}`;
+  }
   res.render("pages/manage/patient-detail", {
     title: "Patient Detail",
     patient: patientDetail,
+    treatmentList: treatmentList,
+    examinationList: examinationList,
   });
 };
 //[GET] /doctor
@@ -103,7 +155,6 @@ module.exports.doctor = async (req, res) => {
     doctor.EStartDate = getDateHelper.getDate(doctor.EStartDate);
     doctor.EDegreeDate = getDateHelper.getDate(doctor.EDegreeDate);
   }
-  console.log(doctorList);
   //convert date to UTC GMT+7
   res.render("pages/manage/doctor", {
     title: "doctor",
