@@ -1,0 +1,65 @@
+extends ../../layouts/layout2.pug
+include ../../mixins/alert.pug
+include ../../mixins/header.pug
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+  h2(class="patient-title") Doctor
+  div(class="patient-table")
+    div(class="table-footer")
+      div(class="table-length" id="table-length")
+        label(for="table-length-select") Rows per page:
+        select(id="table-length-select")
+          option(value="5" selected=paginate.limit==5?true:false) 5
+          option(value="10" selected=paginate.limit==10?true:false) 10
+          option(value="15" selected=paginate.limit==15?true:false) 15
+          option(value="20" selected=paginate.limit==20?true:false) 20
+      div(class="table-pagination" id="table-pagination")
+        button( id="table-pagination-prev" class="button-pagination" data-page=paginate.page) Previous
+        input(class="table-pagination-text" class="page-pagination" value=paginate.page)
+        button( id="table-pagination-next" class="button-pagination" data-total-page=paginate.totalPage data-page=paginate.page) Next
+      div(class="table-search" id="table-search")
+        input(type="text" id="table-search-input" placeholder="Search..." class="table-search-input")
+        select(id="table-search-select" class="table-search-select")
+          option(value="ECode") ECode
+          option(value="EFName") EFName
+          option(value="ELName") ELName
+          option(value="EDoBirth") EDoBirth
+          option(value="EAddress") EAddress
+          option(value="EStartDate") EStartDate
+          option(value="EDegreeDate") EDegreeDate
+          option(value="Speciality") Speciality
+          option(value="DCode") DCode
+        button(id="table-search-button" class="table-search-button") Search
+    table(class="table")
+      thead
+        tr
+          th(scope='col') ECode
+          th(scope='col') EFName
+          th(scope='col') ELName
+          th(scope='col') EDoBirth
+          th(scope='col') EAddress
+          th(scope='col') EStartDate
+          th(scope='col') EDegreeDate
+          th(scope='col') Speciality
+          th(scope='col') DCode
+      tbody
+        if(doctorList)
+          for doctor in doctorList 
+            tr(class="doctor-row" doctor-row data-id=doctor.ECode)
+              td #{doctor.ECode}
+              td #{doctor.EFName}
+              td #{doctor.ELName}
+              td #{doctor.EDoBirth}
+              td #{doctor.EAddress}
+              td #{doctor.EStartDate}
+              td #{doctor.EDegreeDate}
+              td #{doctor.Speciality}
+              td #{doctor.DCode}
+    
+
+
+
+
+
+              

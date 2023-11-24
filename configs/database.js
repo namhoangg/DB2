@@ -31,3 +31,12 @@ module.exports.querySql = async (sql, data) => {
     });
   });
 };
+module.exports.queryOne=async(sql,data)=>{
+  sql+=" LIMIT 1";
+  const result=await this.querySql(sql,data);
+  return result[0];
+};
+module.exports.getRowCount = async (sql) => {
+  const result = await this.querySql(sql);
+  return result.length;
+};

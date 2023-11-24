@@ -1,0 +1,14 @@
+extends ../../layouts/layout2.pug
+include ../../mixins/alert.pug
+include ../../mixins/header.pug
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+  h2(class="patient-title") Patient #{patient.PCode}
+    
+
+
+
+
+
+              

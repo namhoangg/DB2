@@ -13,7 +13,7 @@ app.set("view engine", "pug");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT;
-app.use(cookieParser("saomadoduoc"));
+app.use(cookieParser("secret"));
 app.use(session({ cookie: { maxAge: 60000 } }));
 app.use(flash());
 router(app);
