@@ -258,4 +258,8 @@ td button,.print-button,.print-button2{
 .cry{
   margin-left:50px ;
 }
+.section-number span{
+  font-weight: bold;
+  font-size: 20px;
+}
 /* end patient */

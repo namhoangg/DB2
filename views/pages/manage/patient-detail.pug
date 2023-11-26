@@ -1,6 +1,8 @@
 extends ../../layouts/layout2.pug
 include ../../mixins/alert.pug
 include ../../mixins/header.pug
+include ../../mixins/treatment-report.pug
+include ../../mixins/examination-report.pug
 block main
   +alert-success(5000)
   +alert-error(5000)
@@ -28,9 +30,9 @@ block main
             div(class="patient-info-item-content") #{patient.PTypeCode}
     div(class="col-5")
       div(class="patient-action")
-        button(class="patient-action-button" patient-edit) Edit patient infomation
-        button(class="patient-action-button" patient-treatment) Add treatment report
-        button(class="patient-action-button" patient-examination) Add examination report
+        //- button(class="patient-action-button" patient-edit data-id=patient.PCode) Edit patient infomation
+        button(class="patient-action-button" patient-treatment data-id=patient.PCode) Add treatment report
+        button(class="patient-action-button" patient-examination data-id=patient.PCode) Add examination report
   h2(class="patient-title") History of treatment
   div(class="patient-table")
     table(class="table")
@@ -87,83 +89,8 @@ block main
                   button(print-examination-report data-id=`${exam.ExaminationDate},${exam.doctorName},${exam.OutDiagnosis},${exam.ExmNextDate},${exam.ExmFee}`) Print
 block print
   div(class="print-background")
-  div(class="treatment-report")
-    div(class="print-title")
-      h2 Treatment report
-      hr
-    div(class="patient-info treatment-report-info")
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") PCode:
-          div(class="patient-info-item-content cry") #{patient.PCode}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Name:
-          div(class="patient-info-item-content cry") #{patient.PFName} #{patient.PLName}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Date of Birth:
-          div(class="patient-info-item-content cry") #{patient.PDoB}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Address:
-          div(class="patient-info-item-content cry") #{patient.PAddress}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Phone:
-          div(class="patient-info-item-content cry") #{patient.PPhone}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Treatment Start Date:
-          div(class="patient-info-item-content cry" treatmentStartDate) 
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Admission Date:
-          div(class="patient-info-item-content cry" admissionDate)
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Doctor:
-          div(class="patient-info-item-content cry" doctor)
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") In Result:
-          div(class="patient-info-item-content cry" inResult)
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Date of Discharge:
-          div(class="patient-info-item-content cry" dateOfDischarge)
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Treat End Date:
-          div(class="patient-info-item-content cry" treatEndDate)
-    div(class="print-button-div")
-      button(class="print-button") Print
-  div(class="examination-report")
-    div(class="print-title")
-      h2 Examination report
-      hr
-    div(class="patient-info treatment-report-info")
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") PCode:
-          div(class="patient-info-item-content cry") #{patient.PCode}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Name:
-          div(class="patient-info-item-content cry") #{patient.PFName} #{patient.PLName}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Date of Birth:
-          div(class="patient-info-item-content cry") #{patient.PDoB}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Address:
-          div(class="patient-info-item-content cry") #{patient.PAddress}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Phone:
-          div(class="patient-info-item-content cry") #{patient.PPhone}
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Examination Date:
-          div(class="patient-info-item-content cry" examinationDate) 
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Doctor:
-          div(class="patient-info-item-content cry" doctor2)
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Out Diagnosis:
-          div(class="patient-info-item-content cry" outDiagnosis)
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Next Examination:
-          div(class="patient-info-item-content cry" exmNextDate)
-        div(class="patient-info-item")
-          div(class="patient-info-item-title") Examination Fee:
-          div(class="patient-info-item-content cry" exmFee)
-    div(class="print-button-div2")
-      button(class="print-button2") Print
+  +treatment-report(patient)
+  +examination-report(patient)
 
 
           

@@ -32,12 +32,31 @@ module.exports.register = async (req, res) => {
   ];
   const result = await db.querySql(sqlInsertPatient, data);
   if (result.affectedRows === 1) {
-    req.flash("success", "Register successfully");
-    res.redirect("/manage");
+    if (PTypeCode == "OP") {
+      const sqlOP = `INSERT INTO outpatient(PCode,OutPCode) VALUES(?,?);`;
+      const dataOP = [PCode, `OP${PCode}`];
+      const resultOP = await db.querySql(sqlOP, dataOP);
+      if (resultOP.affectedRows === 1) {
+        req.flash("success", "Register successfully");
+      } else {
+        req.flash("error", "Something went wrong");
+      }
+    } else {
+        const { Infee, sickroom, Nursecode, Indiagnosis } = req.body;
+        const sqlIP=`INSERT INTO inpatient (PCode,INPCode,AdmissionDate,Infee,Sickroom,Nursecode,Indiagnosis) VALUES(?,?,?,?,?,?,?);`;
+        const dataIP=[PCode,`IP${PCode}`,new Date(),Infee,sickroom,Nursecode,Indiagnosis];
+        const resultIP=await db.querySql(sqlIP,dataIP);
+        if(resultIP.affectedRows===1){
+            req.flash("success", "Register successfully");
+        }
+        else{
+            req.flash("error", "Something went wrong");
+        }
+    }
   } else {
     req.flash("error", "Something went wrong");
-    res.redirect("/manage");
   }
+  res.redirect("/manage");
 };
 //[GET] /patient
 module.exports.patient = async (req, res) => {
@@ -205,3 +224,29 @@ module.exports.doctorDetail = async (req, res) => {
     paginate: paginate,
   });
 };
+// //[GET] /patient/edit/:id
+// module.exports.patientEdit = async (req, res) => {
+//   const id = req.params.id;
+//   const sql = `SELECT * FROM patient WHERE PCode=?`;
+//   const data = [id];
+//   const patientDetail = await db.queryOne(sql, data);
+//   patientDetail.PDoB = getDateHelper.getDate(patientDetail.PDoB);
+//   console.log(patientDetail);
+//   const patientType=patientDetail.PTypeCode;
+//   if(patientType=="IP"){
+//     const sqlIP=`SELECT * FROM inpatient WHERE PCode=?`;
+//     const dataIP=[id];
+//     const patientIP=await db.queryOne(sqlIP,dataIP);
+//     patientDetail.Infee=patientIP.Infee;
+//     patientDetail.sickroom=patientIP.sickroom;
+//     patientDetail.Nursecode=patientIP.Nursecode;
+//     patientDetail.Indiagnosis=patientIP.Indiagnosis;
+
+//   }
+//   res.render("pages/manage/patient-edit", {
+//     title: "Edit Patient",
+//     patient: patientDetail,
+//     info: [],
+//     errors: [],
+//   });
+// };

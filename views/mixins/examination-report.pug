@@ -1,0 +1,44 @@
+mixin examination-report(patient)
+  div(class="examination-report")
+    div(class="print-title")
+      h2 Examination report
+      hr
+    div(class="patient-info treatment-report-info")
+        div(class="section-number")
+          span 1. Patient information
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") PCode:
+          div(class="patient-info-item-content cry") #{patient.PCode}
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") Name:
+          div(class="patient-info-item-content cry") #{patient.PFName} #{patient.PLName}
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") Date of Birth:
+          div(class="patient-info-item-content cry") #{patient.PDoB}
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") Address:
+          div(class="patient-info-item-content cry") #{patient.PAddress}
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") Phone:
+          div(class="patient-info-item-content cry") #{patient.PPhone}
+        div(class="section-number")
+          span 2. Doctor information
+          div(class="patient-info-item")
+            div(class="patient-info-item-title") Doctor:
+            div(class="patient-info-item-content cry" doctor2)
+        div(class="section-number")
+          span 3. Examination information
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") Examination Date:
+          div(class="patient-info-item-content cry" examinationDate) 
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") Out Diagnosis:
+          div(class="patient-info-item-content cry" outDiagnosis)
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") Next Examination:
+          div(class="patient-info-item-content cry" exmNextDate)
+        div(class="patient-info-item")
+          div(class="patient-info-item-title") Examination Fee:
+          div(class="patient-info-item-content cry" exmFee)
+    div(class="print-button-div2")
+      button(class="print-button2") Print

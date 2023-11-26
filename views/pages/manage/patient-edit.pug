@@ -1,0 +1,69 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/header.pug
+block main
+  +alert-success(5000)
+  +alert-error(5000) 
+  div(class="row")
+      div(class="col-5")
+        h2 Edit patient #{patient.PCode} 
+      div(class="col-4")
+      div(class="col-1")
+        a.btn.btn-success(href="javascript:;" edit-submit) Edit
+  div(class="register-form")
+    form(method="post" action=`/manage/patient/edit/${patient.PCode}` edit-form)
+      div(class="row")
+        div(class="col-5 mb-2")
+          label(for="PFname" class="col-form-label-sm") First name
+          input(id="PFname" type="text" class="form-control" placeholder="Enter first name" name="PFname" value=patient.PFName) 
+          span(class="error-message") #{errors.PFname}    
+        div(class="col-5 mb-2")
+          label(for="PLname" class="col-form-label-sm") Last name
+          input(id="PLname" type="text" class="form-control" placeholder="Enter last name" name="PLname" value=patient.PLName)
+          span(class="error-message") #{errors.PLname}
+        div(class="col-5 mb-2")
+          label(for="PDob" class="col-form-label-sm") Date of birth
+          input(id="PDob" type="date" class="form-control" placeholder="Enter date of birth" name="PDoB"  dob data-value=patient.PDoB)
+          span(class="error-message") #{errors.PDob}
+        div(class="col-5 mb-2")
+          h6.col-form-label-sm.gender Gender: 
+          span(class="error-message") #{errors.PGender}
+          .form-check.form-check-inline
+            input#femaleGender.form-check-input(type='radio' name='PGender' value='Female' checked=patient.PGender=="Female"?true:false )
+            label.form-check-label(for='femaleGender') Female
+          .form-check.form-check-inline
+            input#maleGender.form-check-input(type='radio' name='PGender' value='Male' checked=patient.PGender=="Male"?true:false)
+            label.form-check-label(for='maleGender') Male
+          .form-check.form-check-inline
+            input#otherGender.form-check-input(type='radio' name='PGender' value='Other' checked=patient.PGender=="Other"?true:false)
+            label.form-check-label(for='otherGender') Other
+        div(class="col-5 mb-2")
+          label(for="Paddress" class="col-form-label-sm") Address
+          input(id="Paddress" type="text" class="form-control" placeholder="Enter address" name="PAddress" value=patient.PAddress)
+          span(class="error-message") #{errors.Paddress}
+        div(class="col-5 mb-2")
+          label(for="PPhone" class="col-form-label-sm") Phone number
+          input(id="PPhone" type="text" class="form-control" placeholder="Enter phone number" name="PPhone" value=patient.PPhone)
+          span(class="error-message") #{errors.PPhone}
+        div(class="col-5 mb-2")
+          label(for="PtypeCode" class="col-form-label-sm") Patient type
+          select(id="PtypeCode" class="form-control custom-select" name="PTypeCode" )
+            option(value="OP" selected=patient.PTypeCode=="OP"?true:false) Outpatient
+            option(value="IP" selected=patient.PTypeCode=="IP"?true:false) Inpatient
+          span(class="error-message") #{errors.PtypeCode}
+        div(class="col-5 mb-2")
+          label(for="Infee" class="col-form-label-sm") Infee
+          input(id="Infee" type="text" class="form-control IP-form" placeholder="Enter Infee" name="Infee" disabled value=patient.Infee)
+          span(class="error-message") #{errors.Infee}
+        div(class="col-5 mb-2")
+          label(for="sickroom" class="col-form-label-sm") Sickroom
+          input(id="sickroom" type="text" class="form-control IP-form" placeholder="Enter sickroom" name="sickroom" disabled value=patient.sickroom)
+          span(class="error-message") #{errors.sickroom}
+        div(class="col-5 mb-2")
+          label(for="Nursecode" class="col-form-label-sm") Nurse code
+          input(id="Nursecode" type="text" class="form-control IP-form" placeholder="Enter nurse code" name="Nursecode" disabled value=patient.Nursecode)
+          span(class="error-message") #{errors.Nursecode}
+        //- textarea
+        div(class="col-10 mb-2")
+          label(for="Indiagnosis" class="col-form-label-sm") Indiagnosis
+          textarea(id="Indiagnosis" class="form-control IP-form" placeholder="Enter Indiagnosis" name="Indiagnosis" rows="2" disabled value=patient.Indiagnosis) #{patient.Indiagnosis}

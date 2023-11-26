@@ -232,3 +232,29 @@ if (printButton2) {
     window.print();
   });
 }
+const patientEdit= document.querySelector("[patient-edit]");
+if(patientEdit){
+  patientEdit.addEventListener("click",()=>{
+    window.location.href=`/manage/patient/edit/${patientEdit.getAttribute("data-id")}`
+  })
+}
+function formatDate(inputDate) {
+  const [day, month, year] = inputDate.split('/').map(part => parseInt(part, 10));
+
+  // Create a new Date object with the given components
+  const formattedDate = new Date(year, month - 1, day);
+  
+  // Get the individual components (year, month, day) in yyyy-mm-dd format
+  // const formattedDateString = formattedDate.toISOString().split('T')[0];
+  return formattedDate;
+  // return formattedDateString;
+}
+
+
+const dob= document.querySelector("[dob]");
+if(dob){
+  const date= dob.getAttribute("data-value");
+  const formattedDate=formatDate(date);
+  // console.log(formattedDate);
+  dob.value=formattedDate;
+}
