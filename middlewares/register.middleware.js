@@ -11,7 +11,7 @@ function validation(body, type) {
     errors.PDob = "*Please enter date of birth";
   }
   if (!PGender) {
-    errors.PGender="*Please select a gender"
+    errors.PGender = "*Please select a gender";
   }
   if (!PAddress) {
     errors.Paddress = "*Please enter address";
@@ -28,6 +28,10 @@ function validation(body, type) {
     if (!Infee) {
       errors.Infee = "*Please enter inpatient fee";
     }
+    //check if infee is number
+    if (isNaN(Infee)) {
+      errors.Infee = "*Please enter a number";
+    }
     if (!sickroom) {
       errors.sickroom = "*Please enter sick room";
     }
@@ -37,7 +41,7 @@ function validation(body, type) {
   }
   return errors;
 }
-module.exports.register = async (req, res,next) => {
+module.exports.register = async (req, res, next) => {
   if (req.body.PTypeCode == "OP") {
     const errors = validation(req.body, "OP");
     if (Object.keys(errors).length > 0) {

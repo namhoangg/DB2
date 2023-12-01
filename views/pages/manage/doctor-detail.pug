@@ -4,7 +4,7 @@ include ../../mixins/header.pug
 block main
   +alert-success(5000)
   +alert-error(5000)
-  h2(class="patient-title") Doctor #{doctor.ECode}
+  h2(class="patient-title") Doctor: #{doctor.ELName} #{doctor.EFName} - #{doctor.ECode}
   div(class="patient-table")
     div(class="table-footer")
       div(class="table-length" id="table-length")
@@ -18,18 +18,6 @@ block main
         button( id="table-pagination-prev" class="button-pagination" data-page=paginate.page) Previous
         input(class="table-pagination-text" class="page-pagination" value=paginate.page)
         button( id="table-pagination-next" class="button-pagination" data-total-page=paginate.totalPage data-page=paginate.page) Next
-      div(class="table-search" id="table-search")
-        input(type="text" id="table-search-input" placeholder="Search..." class="table-search-input")
-        select(id="table-search-select" class="table-search-select")
-          option(value="PCode") PCode
-          option(value="PFName") PFName
-          option(value="PLName") PLName
-          option(value="PDoB") PDoB
-          option(value="PGender") PGender
-          option(value="PAddress") PAddress
-          option(value="PPhone") PPhone
-          option(value="PTypeCode") PTypeCode
-        button(id="table-search-button" class="table-search-button") Search
     table(class="table")
       thead
         tr
