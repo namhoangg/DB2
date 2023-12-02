@@ -1,0 +1,77 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title}
+    link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN' crossorigin='anonymous')
+    link(rel='preconnect' href='https://fonts.googleapis.com')
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap' rel='stylesheet')
+    link(rel='stylesheet' href='/css/reset.css')
+    link(rel='stylesheet' href='/css/base.css')
+    link(rel='stylesheet' href='/css/style.css')
+  body 
+    h1(style="text-align:center;") Examination report
+    span(style="text-align:center;display:block;") Date: #{today}
+    div(class="container" style="padding:20px;")
+      div(class="treatment-report-box")
+        div(class="patient-info-box")
+          div(class="section-number")
+            span 1. Patient information
+          div(class="patient-box-1")
+            div(class="patient-name")
+              span Patient name: 
+              strong #{patient.name}
+            div(class="patient-dob-sex")
+              span(style="margin-right:20px;") Date of birth: #{patient.dob}
+              span(class="d-block") Sex: #{patient.PGender}
+          div(class="patient-box-2")
+            div(class="patient-address")
+              span Address: 
+              strong #{patient.PAddress}
+            div(class="patient-phone")
+              span Phone: 
+              strong #{patient.PPhone}
+        div(class="treatment-info-box")
+          div(class="section-number")
+            span 2. Examination Detail 
+          div(class="treatment-info")
+            span Doctor: 
+              strong #{examinationreport.doctorName}
+            span Examination date: #{examinationreport.ExaminationDate}
+            span Diagnosis: #{examinationreport.OutDiagnosis}
+            span Examination Next Date: #{examinationreport.ExmNextDate}
+            span Examination Fee: #{examinationreport.ExmFee}
+      if (presciptionList.length>0)
+        div(class="section-number")
+          span 3. Prescription Detail
+        table(class="table")
+          thead 
+            tr 
+              th(scope='col') MCode
+              th(scope='col') Medicine name
+              th(scope='col') Price 
+              th(scope='col') Quantity
+              th(scope='col') Effect 
+              th(scope='col') Expire 
+              th(scope='col') Total
+          tbody
+            for presciption in presciptionList
+              tr
+                td #{presciption.MCode}
+                td #{presciption.MName}
+                td #{presciption.MPrice}
+                td(style="padding-left:30px;") #{presciption.Amount}
+                td #{presciption.MEffect}
+                td #{presciption.MExpDate}
+                td #{presciption.Money}
+        div(class="total-money")
+          span Total money: 
+          strong #{examinationreport.totalMoney}
+    script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js' integrity='sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL' crossorigin='anonymous')
+    script.
+      document.addEventListener("DOMContentLoaded", function() {
+          window.print(); // Trigger print dialog on page load
+      });
+    script(src="/js/script.js")

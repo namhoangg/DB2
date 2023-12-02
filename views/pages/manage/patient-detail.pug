@@ -3,6 +3,8 @@ include ../../mixins/alert.pug
 include ../../mixins/header.pug
 include ../../mixins/treatment-report.pug
 include ../../mixins/examination-report.pug
+include ../../mixins/form-print-treatment.pug
+include ../../mixins/form-print-examination.pug
 block main
   +alert-success(5000)
   +alert-error(5000)
@@ -61,8 +63,8 @@ block main
                 td #{treatment.DateOfDischarge}
                 td #{treatment.TreatEndDate}
                 td 
-                  button(print-treatment-report data-id=`${treatment.TreatmentStartDate},${treatment.AdmissionDate},${
-                    treatment.doctorName},${treatment.InResult},${treatment.DateOfDischarge},${treatment.TreatEndDate}`) Print
+                  button(print-treatment-report data-id=`${treatment.TDate},${treatment.PCode},${treatment.INPCode},${treatment.ADate},${
+                    treatment.DrCode}`) Print
   h2(class="patient-title") History of Examination
   div(class="patient-table")
     table(class="table")
@@ -86,11 +88,9 @@ block main
                 td #{exam.ExmNextDate}
                 td #{exam.ExmFee}
                 td 
-                  button(print-examination-report data-id=`${exam.ExaminationDate},${exam.doctorName},${exam.OutDiagnosis},${exam.ExmNextDate},${exam.ExmFee}`) Print
-block print
-  div(class="print-background")
-  +treatment-report(patient)
-  +examination-report(patient)
+                  button(print-examination-report data-id=`${exam.EDate},${exam.PCode},${exam.OUTPCode},${exam.DrCode}`) Print
+  +form-print-treatment
+  +form-print-examination
 
 
           

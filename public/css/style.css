@@ -191,13 +191,13 @@ header {
   align-items: center;
 }
 .patient-info-item-title{
-  font-size: 18px;
+  font-size: 13px;
   font-weight: 500;
   margin-right: 20px;
   width: 50%;
 }
 .patient-info-item-content{
-  font-size: 18px;
+  font-size: 13px;
   width: 50%;
 }
 .patient-action{
@@ -260,6 +260,18 @@ td button,.print-button,.print-button2{
 }
 .section-number span{
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
 }
+.treatment-info span{
+  display: block;
+}
+.treatment-report-box{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+/* .patient-box-1,.patient-box-2{
+  display: flex;
+  justify-content: space-between;
+} */
 /* end patient */

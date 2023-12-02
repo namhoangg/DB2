@@ -8,5 +8,6 @@ router.get("/patient", controller.patient);
 router.get("/patient/detail/:id", controller.patientDetail);
 router.get("/doctor", controller.doctor);
 router.get("/doctor/detail/:id", controller.doctorDetail);
-// router.get("/patient/edit/:id", controller.patientEdit);
+router.post("/treatmentreport/print", controller.printTreatmentReport);
+router.post("/examinationreport/print", controller.printExaminationReport);
 module.exports = router;

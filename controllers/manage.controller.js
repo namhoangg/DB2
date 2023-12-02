@@ -2,6 +2,8 @@ const db = require("../configs/database");
 const filterSearchHelper = require("../helpers/filter");
 const paginateHelper = require("../helpers/pagination");
 const getDateHelper = require("../helpers/getDate");
+const decrypted = require("../helpers/decrypt");
+const sqlDate = require("../helpers/sqlDate");
 //[GET] /
 module.exports.index = (req, res) => {
   res.render("pages/manage/index", {
@@ -42,16 +44,23 @@ module.exports.register = async (req, res) => {
         req.flash("error", "Something went wrong");
       }
     } else {
-        const { Infee, sickroom, Nursecode, Indiagnosis } = req.body;
-        const sqlIP=`INSERT INTO inpatient (PCode,INPCode,AdmissionDate,Infee,Sickroom,Nursecode,Indiagnosis) VALUES(?,?,?,?,?,?,?);`;
-        const dataIP=[PCode,`IP${PCode}`,new Date(),Infee,sickroom,Nursecode,Indiagnosis];
-        const resultIP=await db.querySql(sqlIP,dataIP);
-        if(resultIP.affectedRows===1){
-            req.flash("success", "Register successfully");
-        }
-        else{
-            req.flash("error", "Something went wrong");
-        }
+      const { Infee, sickroom, Nursecode, Indiagnosis } = req.body;
+      const sqlIP = `INSERT INTO inpatient (PCode,INPCode,AdmissionDate,Infee,Sickroom,Nursecode,Indiagnosis) VALUES(?,?,?,?,?,?,?);`;
+      const dataIP = [
+        PCode,
+        `IP${PCode}`,
+        new Date(),
+        Infee,
+        sickroom,
+        Nursecode,
+        Indiagnosis,
+      ];
+      const resultIP = await db.querySql(sqlIP, dataIP);
+      if (resultIP.affectedRows === 1) {
+        req.flash("success", "Register successfully");
+      } else {
+        req.flash("error", "Something went wrong");
+      }
     }
   } else {
     req.flash("error", "Something went wrong");
@@ -97,19 +106,19 @@ module.exports.patientDetail = async (req, res) => {
   patientDetail.PDoB = getDateHelper.getDate(patientDetail.PDoB);
   const sqlTreatment = `SELECT * FROM treatmentreport WHERE PCode=?`;
   const treatmentList = await db.querySql(sqlTreatment, data);
-  //   [
-  //   {
-  //     TreatmentStartDate: 2022-05-16T00:30:00.000Z,
-  //     PCode: '000000001',
-  //     INPCode: 'IP000000001',
-  //     AdmissionDate: 2022-05-09T17:00:00.000Z,
-  //     DrCode: 'Dr000001',
-  //     InResult: 'recovered',
-  //     DateOfDischarge: 2022-05-19T17:00:00.000Z,
-  //     TreatEndDate: 2022-06-04T17:00:00.000Z
-  //   }
-  // ]
   for (const treatment of treatmentList) {
+    treatment.TDate = treatment.TreatmentStartDate;
+    treatment.ADate = treatment.AdmissionDate;
+    //     {
+    //   TreatmentStartDate: 2022-05-16T00:30:00.000Z,
+    //   PCode: '000000001',
+    //   INPCode: 'IP000000001',
+    //   AdmissionDate: 2022-05-09T17:00:00.000Z,
+    //   DrCode: 'Dr000001',
+    //   InResult: 'recovered',
+    //   DateOfDischarge: 2022-05-19T17:00:00.000Z,
+    //   TreatEndDate: 2022-06-04T17:00:00.000Z
+    // }
     treatment.TreatmentStartDate = getDateHelper.getDate(
       treatment.TreatmentStartDate
     );
@@ -126,18 +135,8 @@ module.exports.patientDetail = async (req, res) => {
   }
   const sqlExamination = `SELECT * FROM examinationreport WHERE PCode=?`;
   const examinationList = await db.querySql(sqlExamination, data);
-  //   [
-  //   {
-  //     ExaminationDate: 2022-05-10T00:30:00.000Z,
-  //     PCode: '000000001',
-  //     OUTPCode: 'OP000000001',
-  //     DrCode: 'Dr000001',
-  //     OutDiagnosis: 'Routine checkup',
-  //     ExmNextDate: 2022-06-09T17:00:00.000Z,
-  //     ExmFee: 50
-  //   }
-  // ]
   for (const exam of examinationList) {
+    exam.EDate=exam.ExaminationDate;
     exam.ExaminationDate = getDateHelper.getDate(exam.ExaminationDate);
     exam.ExmNextDate = getDateHelper.getDate(exam.ExmNextDate);
     exam.doctor = await db.queryOne(
@@ -224,29 +223,130 @@ module.exports.doctorDetail = async (req, res) => {
     paginate: paginate,
   });
 };
-// //[GET] /patient/edit/:id
-// module.exports.patientEdit = async (req, res) => {
-//   const id = req.params.id;
-//   const sql = `SELECT * FROM patient WHERE PCode=?`;
-//   const data = [id];
-//   const patientDetail = await db.queryOne(sql, data);
-//   patientDetail.PDoB = getDateHelper.getDate(patientDetail.PDoB);
-//   console.log(patientDetail);
-//   const patientType=patientDetail.PTypeCode;
-//   if(patientType=="IP"){
-//     const sqlIP=`SELECT * FROM inpatient WHERE PCode=?`;
-//     const dataIP=[id];
-//     const patientIP=await db.queryOne(sqlIP,dataIP);
-//     patientDetail.Infee=patientIP.Infee;
-//     patientDetail.sickroom=patientIP.sickroom;
-//     patientDetail.Nursecode=patientIP.Nursecode;
-//     patientDetail.Indiagnosis=patientIP.Indiagnosis;
+//[GET] /treatmentreport/print/:id
+module.exports.printTreatmentReport = async (req, res) => {
+  var { TDate, PCode, INPCode, ADate, DrCode } = req.body;
+  // console.log(TDate,PCode,INPCode,ADate,DrCode);
+  // const presciptionList = await db.querySql(
+  //   `SELECT MCode, Amount FROM prescriptionsinpatient WHERE TreatmentStartDate=? AND PCode=? AND INPCode=? AND AdmissionDate=? AND DrCode=?`,
+  //   [TDate, PCode, INPCode, ADate, DrCode]
+  // );
+  TDate = sqlDate(TDate);
+  ADate = sqlDate(ADate);
+  const treatmentreport = await db.queryOne(
+    `SELECT * FROM treatmentreport WHERE TreatmentStartDate=? AND PCode=? AND INPCode=? AND AdmissionDate=? AND DrCode=?`,
+    [TDate, PCode, INPCode, ADate, DrCode]
+  );
+  treatmentreport.TreatmentStartDate = getDateHelper.getDate(
+    treatmentreport.TreatmentStartDate
+  );
+  treatmentreport.AdmissionDate = getDateHelper.getDate(
+    treatmentreport.AdmissionDate
+  );
+  treatmentreport.DateOfDischarge = getDateHelper.getDate(
+    treatmentreport.DateOfDischarge
+  );
+  treatmentreport.TreatEndDate = getDateHelper.getDate(
+    treatmentreport.TreatEndDate
+  );
+  treatmentreport.doctor = await db.queryOne(
+    `SELECT EFName,ELName FROM doctor WHERE ECode=?`,
+    [treatmentreport.DrCode]
+  );
+  treatmentreport.doctorName = `${treatmentreport.doctor.EFName} ${treatmentreport.doctor.ELName}`;
+  const sql = `SELECT prescriptionsinpatient.MCode, prescriptionsinpatient.Amount, medicationpackage.MExpDate AS Expire, medicationpackage.MName, medicationpackage.MPrice, medicationpackage.MEffect 
+FROM prescriptionsinpatient 
+JOIN medicationpackage ON prescriptionsinpatient.MCode = medicationpackage.MCode 
+WHERE prescriptionsinpatient.TreatmentStartDate = ? 
+    AND prescriptionsinpatient.PCode = ? 
+    AND prescriptionsinpatient.INPCode = ? 
+    AND prescriptionsinpatient.AdmissionDate = ? 
+    AND prescriptionsinpatient.DrCode = ?
+`;
+  const presciptionList = await db.querySql(sql, [
+    TDate,
+    PCode,
+    INPCode,
+    ADate,
+    DrCode,
+  ]);
+  presciptionList.totalMoney = 0;
+  for (const prescription of presciptionList) {
+    prescription.MExpDate = getDateHelper.getDate(prescription.Expire);
+    prescription.Money = prescription.MPrice * prescription.Amount;
+    presciptionList.totalMoney += prescription.Money;
+  }
+  const patient = await db.queryOne(`SELECT * FROM patient WHERE PCode=?`, [
+    PCode,
+  ]);
+  patient.name = `${patient.PFName} ${patient.PLName}`;
+  patient.dob = getDateHelper.getDate(patient.PDoB);
+  date = new Date();
+  today = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  console.log(treatmentreport, presciptionList);
+  res.render("pages/manage/print-treatment-report", {
+    title: "Print Treatment Report",
+    treatmentreport: treatmentreport,
+    presciptionList: presciptionList,
+    patient: patient,
+    today: today,
+  });
+};
+//[GET] /examinationreport/print/
+module.exports.printExaminationReport = async (req, res) => {
+  var { EDate, PCode, OUTPCode, DrCode } = req.body;
+  EDate = sqlDate(EDate);
+  const examinationreport = await db.queryOne(
+    `SELECT * FROM examinationreport WHERE ExaminationDate=? AND PCode=? AND OUTPCode=? AND DrCode=?`,
+    [EDate, PCode, OUTPCode, DrCode]
+  );
+  examinationreport.ExaminationDate = getDateHelper.getDate(
+    examinationreport.ExaminationDate
+  );
+  examinationreport.ExmNextDate = getDateHelper.getDate(
+    examinationreport.ExmNextDate
+  );
+  examinationreport.doctor = await db.queryOne(
+    `SELECT EFName,ELName FROM doctor WHERE ECode=?`,
+    [examinationreport.DrCode]
+  );
+  examinationreport.doctorName = `${examinationreport.doctor.EFName} ${examinationreport.doctor.ELName}`;
+  const sql=`SELECT prescriptionsoutpatient.MCode, prescriptionsoutpatient.Amount, medicationpackage.MExpDate AS Expire, medicationpackage.MName, medicationpackage.MPrice, medicationpackage.MEffect
+  FROM prescriptionsoutpatient
+  JOIN medicationpackage ON prescriptionsoutpatient.MCode = medicationpackage.MCode
+  WHERE prescriptionsoutpatient.ExaminationDate = ?
+      AND prescriptionsoutpatient.PCode = ?
+      AND prescriptionsoutpatient.OUTPCode = ?
+      AND prescriptionsoutpatient.DrCode = ?
+      `;
+  const presciptionList = await db.querySql(sql, [
+    EDate,
+    PCode,
+    OUTPCode,
+    DrCode,
+  ]);
+;
+  presciptionList.totalMoney = 0;
+  for (const prescription of presciptionList) {
+    prescription.MExpDate = getDateHelper.getDate(prescription.Expire);
+    prescription.Money = prescription.MPrice * prescription.Amount;
+    presciptionList.totalMoney += prescription.Money;
+  }
+  const patient = await db.queryOne(`SELECT * FROM patient WHERE PCode=?`, [
+    PCode,
+  ]);
+  patient.name = `${patient.PFName} ${patient.PLName}`;
+  patient.dob = getDateHelper.getDate(patient.PDoB);
+  date = new Date();
+  today = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  examinationreport.totalMoney =
+    presciptionList.totalMoney + examinationreport.ExmFee;
+  res.render("pages/manage/print-examination-report", {
+    title: "Print Examination Report",
+    examinationreport: examinationreport,
+    presciptionList: presciptionList,
+    patient: patient,
+    today: today,
+  });
 
-//   }
-//   res.render("pages/manage/patient-edit", {
-//     title: "Edit Patient",
-//     patient: patientDetail,
-//     info: [],
-//     errors: [],
-//   });
-// };
+};
