@@ -1,3 +1,131 @@
+const express = require('express')
+const mysql = require('mysql2');
+const ExcelJS = require('exceljs');
+const app = express()
+const port = 3000
+
+const odbc = require('odbc');
+
+app.get('/new', async (req, res) => {
+    try {
+        let totalExec = 0;
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Durations');
+        worksheet.columns = [
+          { header: 'Iteration', key: 'iteration', width: 10 },
+          { header: 'Duration', key: 'duration', width: 10 },
+        ];
+        
+        
+
+        for (let i = 0; i < 1000; i++) {
+            const pre_query = new Date().getTime();
+            
+
+            const connectionString = 'DSN=MyDSN;UID=root;PWD=root';
+            const connection = await odbc.connect(connectionString);
+
+            const result = await connection.query('SELECT * FROM patient;');
+            //console.log(result);
+
+            const post_query = new Date().getTime();
+            const duration = (post_query - pre_query); //unit: mili-second
+            console.log(duration);
+            totalExec += duration;
+
+            worksheet.addRow({ iteration: i, duration: duration });
+
+            if (i == 999) {
+              const ave = totalExec / 1000;
+              workbook.xlsx.writeFile('durationsODBC.xlsx');
+              return res.send("Average = " + ave)
+            }
+
+            connection.close(); 
+        }
+    } catch (error) {
+        console.log(">>> check error old: ", error)
+    }
+
+})
+
+app.get('/old', async (req, res) => {
+  try {
+      let totalExec = 0;
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Durations');
+      worksheet.columns = [
+        { header: 'Iteration', key: 'iteration', width: 10 },
+        { header: 'Duration', key: 'duration', width: 10 },
+      ];
+
+
+      for (let i = 0; i < 1000; i++) {
+          const pre_query = new Date().getTime();
+          let con = null;
+          con = mysql.createConnection({
+              host: 'localhost',
+              user: 'root',
+              database: 'testing',
+              password: 'root',
+              connectTimeout: 60000,
+          })
+
+          con.query(
+              'SELECT * FROM patient;',
+              //function (err, results, fields) {
+              //     // get a timestamp after running the query
+              //     const post_query = new Date().getTime();
+              //     const duration = (post_query - pre_query); //unit: second
+              //     totalExec += duration;
+
+              //     //console.log(">>>", " i = ", i, " duration = ", duration)
+              //     //console.log(duration)
+              //     worksheet.addRow({ iteration: i, duration: duration });
+
+              //     if (i == 999) {
+              //         const ave = totalExec / 1000;
+              //         workbook.xlsx.writeFile('durationsMysql2.xlsx');
+              //         return res.send("Average = " + ave)
+              //     }
+
+
+              // }
+          );
+          const post_query = new Date().getTime();
+          const duration = (post_query - pre_query); //unit: mili second
+          console.log(duration);
+          totalExec += duration;
+
+          //console.log(">>>", " i = ", i, " duration = ", duration)
+          //console.log(duration)
+          worksheet.addRow({ iteration: i, duration: duration });
+
+          if (i == 999) {
+              const ave = totalExec / 1000;
+              workbook.xlsx.writeFile('durationsMysql2.xlsx');
+              return res.send("Average = " + ave)
+          }
+
+          con.destroy();
+      }
+  } catch (error) {
+      console.log(">>> check error old: ", error)
+  }
+
+})
+
+
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
+});
+
+
+/*
 const express = require("express");
 const app = express();
 const flash = require("express-flash");
@@ -20,3 +148,5 @@ router(app);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+*/
