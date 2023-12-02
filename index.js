@@ -25,8 +25,8 @@ app.get('/new', async (req, res) => {
             const connectionString = 'DSN=MyDSN;UID=root;PWD=root';
             const connection = await odbc.connect(connectionString);
 
-            const result = await connection.query('SELECT * FROM patient;');
-            //console.log(result);
+            const result = await connection.query('SELECT * FROM treatmentreport WHERE PCode=\'000000008\';');
+            //if (i === 999) console.log(result); //check query result is true
 
             const post_query = new Date().getTime();
             const duration = (post_query - pre_query); //unit: mili-second
@@ -38,6 +38,7 @@ app.get('/new', async (req, res) => {
             if (i == 999) {
               const ave = totalExec / 1000;
               workbook.xlsx.writeFile('durationsODBC.xlsx');
+              connection.close();
               return res.send("Average = " + ave)
             }
 
@@ -59,56 +60,47 @@ app.get('/old', async (req, res) => {
         { header: 'Duration', key: 'duration', width: 10 },
       ];
 
-
+    
       for (let i = 0; i < 1000; i++) {
           const pre_query = new Date().getTime();
           let con = null;
-          con = mysql.createConnection({
-              host: 'localhost',
-              user: 'root',
-              database: 'testing',
-              password: 'root',
-              connectTimeout: 60000,
+          con = await mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            database: 'testing',
+            password: 'root',
+            connectTimeout: 60000,
           })
-
-          con.query(
-              'SELECT * FROM patient;',
-              //function (err, results, fields) {
-              //     // get a timestamp after running the query
-              //     const post_query = new Date().getTime();
-              //     const duration = (post_query - pre_query); //unit: second
-              //     totalExec += duration;
-
-              //     //console.log(">>>", " i = ", i, " duration = ", duration)
-              //     //console.log(duration)
-              //     worksheet.addRow({ iteration: i, duration: duration });
-
-              //     if (i == 999) {
-              //         const ave = totalExec / 1000;
-              //         workbook.xlsx.writeFile('durationsMysql2.xlsx');
-              //         return res.send("Average = " + ave)
-              //     }
-
-
-              // }
+          
+          try {
+          const result = await con.promise().query(
+             'SELECT * FROM patient;'
           );
+          } catch(err){console.error(err);}
+          //if(i === 999) console.log(result); //check query result is true
           const post_query = new Date().getTime();
           const duration = (post_query - pre_query); //unit: mili second
-          console.log(duration);
+          console.log(">>>", " i = ", i, " duration = ", duration);
           totalExec += duration;
-
-          //console.log(">>>", " i = ", i, " duration = ", duration)
-          //console.log(duration)
+            
           worksheet.addRow({ iteration: i, duration: duration });
 
           if (i == 999) {
               const ave = totalExec / 1000;
               workbook.xlsx.writeFile('durationsMysql2.xlsx');
+              // try {
+              //   await workbook.xlsx.writeFile('durationsMysql2.xlsx');
+              // } catch (err) {
+              //   // Handle error
+              //   console.error(err);
+              // }
+              await con.promise().end();
               return res.send("Average = " + ave)
           }
 
-          con.destroy();
+          await con.promise().end();
       }
+      //con.destroy();
   } catch (error) {
       console.log(">>> check error old: ", error)
   }
