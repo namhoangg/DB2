@@ -25,7 +25,7 @@ app.get('/new', async (req, res) => {
             const connectionString = 'DSN=MyDSN;UID=root;PWD=root';
             const connection = await odbc.connect(connectionString);
 
-            const result = await connection.query('SELECT * FROM treatmentreport WHERE PCode=\'000000008\';');
+            const result = await connection.query('SELECT SQL_NO_CACHE * FROM patient;');
             //if (i === 999) console.log(result); //check query result is true
 
             const post_query = new Date().getTime();
@@ -64,6 +64,7 @@ app.get('/old', async (req, res) => {
       for (let i = 0; i < 1000; i++) {
           const pre_query = new Date().getTime();
           let con = null;
+          //con = await mysql.createConnection({
           con = await mysql.createConnection({
             host: 'localhost',
             user: 'root',
@@ -71,14 +72,16 @@ app.get('/old', async (req, res) => {
             password: 'root',
             connectTimeout: 60000,
           })
-          
           try {
-          const result = await con.promise().query(
-             'SELECT * FROM patient;'
-          );
+            const result = await con.promise().query(
+              'SELECT SQL_NO_CACHE * FROM patient;'
+            );
+            
           } catch(err){console.error(err);}
           //if(i === 999) console.log(result); //check query result is true
+
           const post_query = new Date().getTime();
+
           const duration = (post_query - pre_query); //unit: mili second
           console.log(">>>", " i = ", i, " duration = ", duration);
           totalExec += duration;
