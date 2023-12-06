@@ -82,6 +82,7 @@ module.exports.patient = async (req, res) => {
   const paginate = paginateHelper.paginate(req.query, paginateObject);
   // { page: 1, limit: 10, offset: 0, totalPatient: 12, totalPage: 2 }
   const sqlPatient = `SELECT * FROM patient ${filter} LIMIT ${paginate.limit} OFFSET ${paginate.offset}`;
+  
   patientList = await db.querySql(sqlPatient);
   //convert date to UTC GMT+7
   patientList.forEach((patient) => {
@@ -105,6 +106,7 @@ module.exports.patientDetail = async (req, res) => {
   const patientDetail = await db.queryOne(sql, data);
   patientDetail.PDoB = getDateHelper.getDate(patientDetail.PDoB);
   const sqlTreatment = `SELECT * FROM treatmentreport WHERE PCode=?`;
+  console.log(sqlTreatment);
   const treatmentList = await db.querySql(sqlTreatment, data);
   for (const treatment of treatmentList) {
     treatment.TDate = treatment.TreatmentStartDate;
@@ -254,6 +256,16 @@ module.exports.printTreatmentReport = async (req, res) => {
     [treatmentreport.DrCode]
   );
   treatmentreport.doctorName = `${treatmentreport.doctor.EFName} ${treatmentreport.doctor.ELName}`;
+  const sqltest = `SELECT prescriptionsinpatient.MCode, prescriptionsinpatient.Amount, medicationpackage.MExpDate AS Expire, medicationpackage.MName, medicationpackage.MPrice, medicationpackage.MEffect 
+FROM prescriptionsinpatient 
+JOIN medicationpackage ON prescriptionsinpatient.MCode = medicationpackage.MCode 
+WHERE prescriptionsinpatient.TreatmentStartDate = '${TDate}' 
+    AND prescriptionsinpatient.PCode = '${PCode}' 
+    AND prescriptionsinpatient.INPCode = '${INPCode}'
+    AND prescriptionsinpatient.AdmissionDate = '${ADate}'
+    AND prescriptionsinpatient.DrCode = '${DrCode}'
+`;
+console.log(sqltest);
   const sql = `SELECT prescriptionsinpatient.MCode, prescriptionsinpatient.Amount, medicationpackage.MExpDate AS Expire, medicationpackage.MName, medicationpackage.MPrice, medicationpackage.MEffect 
 FROM prescriptionsinpatient 
 JOIN medicationpackage ON prescriptionsinpatient.MCode = medicationpackage.MCode 

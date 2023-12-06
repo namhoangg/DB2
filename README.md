@@ -1,6 +1,10 @@
 # DB2
 # How to run?
+<<<<<<< HEAD
 1. You have to have your own database at local with data inserted
+=======
+1. You have to have your own database at local with data inserted using file 1.1.sql and 1.2.sql
+>>>>>>> 18cf07209355f97b5271e174269c1fb4bf050c44
 2. You have to modify some code in the file database.js to connect to your database
 3. In your database, create a table name user with 4 columns: userId (pri), username, password, token, and insert username: admin, password: $2b$10$6AqtP8fpm2fXohxoQ5xBmeyUo3hOSkSN37XrqRQzo/2cqENf8SIne, token: 0UVIyqpXXCbCYmkVPUj9, userId:1.
 ```sql
