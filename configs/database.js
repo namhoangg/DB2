@@ -36,7 +36,7 @@ module.exports.queryOne=async(sql,data)=>{
   const result=await this.querySql(sql,data);
   return result[0];
 };
-module.exports.getRowCount = async (sql) => {
-  const result = await this.querySql(sql);
+module.exports.getRowCount = async (sql,data) => {
+  const result = await this.querySql(sql,data);
   return result.length;
 };

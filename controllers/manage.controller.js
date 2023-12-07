@@ -79,7 +79,7 @@ module.exports.patient = async (req, res) => {
     sql = `SELECT * FROM patient`;
     data = [];
   }
-  const totalPatient = await db.getRowCount(sql);
+  const totalPatient = await db.getRowCount(sql,data);
   const paginateObject = {
     page: 1,
     limit: 10,
@@ -166,23 +166,23 @@ module.exports.patientDetail = async (req, res) => {
     treatmentList: treatmentList,
     examinationList: examinationList,
   });
-  } catch (err){
-    console.log(err);
-  }
+} catch (err){
+  console.log(err);
+}
 };
 //[GET] /doctor
 module.exports.doctor = async (req, res) => {
   try {
   var sql, data;
   if (req.query.keyword){
-    sql = `SELECT * FROM patient WHERE ? LIKE ?`; 
+    sql = `SELECT * FROM doctor WHERE ? LIKE ?`; 
     data = [req.query.type, `%${req.query.keyword}%`];
   }
   else {
-    sql = `SELECT * FROM patient`;
+    sql = `SELECT * FROM doctor`;
     data = [];
   }
-  const totalDoctor = await db.getRowCount(sql);
+  const totalDoctor = await db.getRowCount(sql,data);
   const paginateObject = {
     page: 1,
     limit: 10,
@@ -191,8 +191,8 @@ module.exports.doctor = async (req, res) => {
   };
   const paginate = paginateHelper.paginate(req.query, paginateObject);
   // { page: 1, limit: 10, offset: 0, totalPatient: 12, totalPage: 2 }
-  const sqlDoctor = `SELECT * FROM doctor ${filter} LIMIT ${paginate.limit} OFFSET ${paginate.offset}`;
-  const doctorList = await db.querySql(sqlDoctor);
+  const sqlDoctor = sql + ` LIMIT ${paginate.limit} OFFSET ${paginate.offset}`;
+  const doctorList = await db.querySql(sqlDoctor, data);
   for (doctor of doctorList) {
     doctor.EDoBirth = getDateHelper.getDate(doctor.EDoBirth);
     doctor.EStartDate = getDateHelper.getDate(doctor.EStartDate);
