@@ -25,12 +25,13 @@ app.get('/new', async (req, res) => {
             const connectionString = 'DSN=MyDSN;UID=root;PWD=root';
             const connection = await odbc.connect(connectionString);
 
-            const result = await connection.query('SELECT SQL_NO_CACHE * FROM patient;');
+            const result = await connection.query(
+              'SELECT SQL_NO_CACHE prescriptionsinpatient.MCode, prescriptionsinpatient.Amount, medicationpackage.MExpDate AS Expire, medicationpackage.MName, medicationpackage.MPrice, medicationpackage.MEffect FROM prescriptionsinpatient JOIN medicationpackage ON prescriptionsinpatient.MCode = medicationpackage.MCode WHERE prescriptionsinpatient.TreatmentStartDate = \'2022-05-16 07:30:00\' AND prescriptionsinpatient.PCode = \'000000001\' AND prescriptionsinpatient.INPCode = \'IP000000001\' AND prescriptionsinpatient.AdmissionDate = \'2022-05-10 00:00:00\' AND prescriptionsinpatient.DrCode = \'Dr000001\';');
             //if (i === 999) console.log(result); //check query result is true
 
             const post_query = new Date().getTime();
             const duration = (post_query - pre_query); //unit: mili-second
-            console.log(duration);
+            console.log(">>>", " iNew = ", i, " duration = ", duration);
             totalExec += duration;
 
             worksheet.addRow({ iteration: i, duration: duration });
@@ -74,7 +75,7 @@ app.get('/old', async (req, res) => {
           })
           try {
             const result = await con.promise().query(
-              'SELECT SQL_NO_CACHE * FROM patient;'
+              'SELECT SQL_NO_CACHE prescriptionsinpatient.MCode, prescriptionsinpatient.Amount, medicationpackage.MExpDate AS Expire, medicationpackage.MName, medicationpackage.MPrice, medicationpackage.MEffect FROM prescriptionsinpatient JOIN medicationpackage ON prescriptionsinpatient.MCode = medicationpackage.MCode WHERE prescriptionsinpatient.TreatmentStartDate = \'2022-05-16 07:30:00\' AND prescriptionsinpatient.PCode = \'000000001\' AND prescriptionsinpatient.INPCode = \'IP000000001\' AND prescriptionsinpatient.AdmissionDate = \'2022-05-10 00:00:00\' AND prescriptionsinpatient.DrCode = \'Dr000001\';'
             );
             
           } catch(err){console.error(err);}
@@ -83,7 +84,7 @@ app.get('/old', async (req, res) => {
           const post_query = new Date().getTime();
 
           const duration = (post_query - pre_query); //unit: mili second
-          console.log(">>>", " i = ", i, " duration = ", duration);
+          console.log(">>>", " iOld = ", i, " duration = ", duration);
           totalExec += duration;
             
           worksheet.addRow({ iteration: i, duration: duration });
