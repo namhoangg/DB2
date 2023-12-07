@@ -1,7 +1,6 @@
 module.exports.paginate = (queryObject, paginateObject) => {
   if (queryObject.limit) {
     paginateObject.limit = parseInt(queryObject.limit);
-    paginateObject.limit = paginateObject.limit % 20;
     paginateObject.totalPage = Math.ceil(
       paginateObject.totalRow / paginateObject.limit
     );

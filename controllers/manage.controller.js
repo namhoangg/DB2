@@ -69,9 +69,16 @@ module.exports.register = async (req, res) => {
 };
 //[GET] /patient
 module.exports.patient = async (req, res) => {
-  const filter = filterSearchHelper.filterSearch(req.query);
-
-  const sql = `SELECT * FROM patient ${filter}`;
+  try {
+    var sql, data;
+  if (req.query.keyword){
+    sql = `SELECT * FROM patient WHERE ? LIKE ?`; 
+    data = [req.query.type, `%${req.query.keyword}%`];
+  }
+  else {
+    sql = `SELECT * FROM patient`;
+    data = [];
+  }
   const totalPatient = await db.getRowCount(sql);
   const paginateObject = {
     page: 1,
@@ -81,9 +88,9 @@ module.exports.patient = async (req, res) => {
   };
   const paginate = paginateHelper.paginate(req.query, paginateObject);
   // { page: 1, limit: 10, offset: 0, totalPatient: 12, totalPage: 2 }
-  const sqlPatient = `SELECT * FROM patient ${filter} LIMIT ${paginate.limit} OFFSET ${paginate.offset}`;
+  const sqlPatient = sql + ` LIMIT ${paginate.limit} OFFSET ${paginate.offset}`;
   
-  patientList = await db.querySql(sqlPatient);
+  patientList = await db.querySql(sqlPatient,data);
   //convert date to UTC GMT+7
   patientList.forEach((patient) => {
     const date = new Date(patient.PDoB);
@@ -97,9 +104,15 @@ module.exports.patient = async (req, res) => {
     patientList: patientList,
     paginate: paginate,
   });
+  } catch (err){
+    console.log(err);
+  }
 };
+
 //[GET] /patient/detail/:id
 module.exports.patientDetail = async (req, res) => {
+  try {
+
   const id = req.params.id;
   const sql = `SELECT * FROM patient WHERE PCode=?`;
   const data = [id];
@@ -153,12 +166,22 @@ module.exports.patientDetail = async (req, res) => {
     treatmentList: treatmentList,
     examinationList: examinationList,
   });
+  } catch (err){
+    console.log(err);
+  }
 };
 //[GET] /doctor
 module.exports.doctor = async (req, res) => {
-  const filter = filterSearchHelper.filterSearch(req.query);
-
-  const sql = `SELECT * FROM doctor ${filter}`;
+  try {
+  var sql, data;
+  if (req.query.keyword){
+    sql = `SELECT * FROM patient WHERE ? LIKE ?`; 
+    data = [req.query.type, `%${req.query.keyword}%`];
+  }
+  else {
+    sql = `SELECT * FROM patient`;
+    data = [];
+  }
   const totalDoctor = await db.getRowCount(sql);
   const paginateObject = {
     page: 1,
@@ -181,9 +204,13 @@ module.exports.doctor = async (req, res) => {
     paginate: paginate,
     doctorList: doctorList,
   });
+  } catch (err){
+    console.log(err);
+  }
 };
 //[GET] /doctor/detail/:id
 module.exports.doctorDetail = async (req, res) => {
+try {
   const id = req.params.id;
   const sqlDoctor = `SELECT * FROM doctor WHERE ECode=?`;
   const data = [id];
@@ -224,6 +251,10 @@ module.exports.doctorDetail = async (req, res) => {
     patientList: patientList,
     paginate: paginate,
   });
+}
+catch (err){
+  console.log(err);
+}
 };
 //[GET] /treatmentreport/print/:id
 module.exports.printTreatmentReport = async (req, res) => {
